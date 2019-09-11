@@ -24,7 +24,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_error_message 'Password'
   end
 
-  test 'valid sign up redirects to user profile' do
+  test 'valid sign up logs in & redirects to user profile' do
     get signup_path
 
     assert_difference 'User.count', 1 do
@@ -36,6 +36,8 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_template 'users/show'
 
     assert_not flash.empty?
+    assert_select "a[href=?]", login_path, count: 0
+    assert_select "a[href=?]", logout_path
   end
 
   def post_user(user_params)

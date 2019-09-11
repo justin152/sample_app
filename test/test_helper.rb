@@ -6,6 +6,7 @@ Minitest::Reporters.use!
 
 class ActiveSupport::TestCase
   include ApplicationHelper
+  include SessionsHelper
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
