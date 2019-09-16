@@ -5,7 +5,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     get signup_path
 
     assert_no_difference 'User.count' do
-      post_user(name: "",         email: "user@invalid",
+      post_user(name:     "",     email: "user@invalid",
                 password: "foo",  password_confirmation: "bar")
     end
 
@@ -16,7 +16,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
   test 'invalid sign up error messages' do
     get signup_path
 
-    post_user(name:  "",     email: "",
+    post_user(name:     "",  email: "",
               password: "",  password_confirmation: "")
 
     assert_error_message 'Email'
