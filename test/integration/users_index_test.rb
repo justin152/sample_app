@@ -5,6 +5,28 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     @user = users(:michael)
     @other_user = users(:archer)
     @admin = users(:malory)
+    @inactive_user = users(:robert)
+  end
+
+  test 'index only shows active users' do
+    log_in_as(@user)
+    get users_path
+
+    assert_select "a[href=?]", user_path(@user), text: @user.name
+    assert_select "a[href=?]", user_path(@inactive_user),
+                  text: @inactive_user.name, count: 0
+  end
+
+  test 'show redirects inactive users' do
+    log_in_as(@user)
+    get user_path @user
+
+    assert_template 'users/show'
+
+    get user_path @inactive_user
+
+    assert_redirected_to root_path
+    assert_not flash.empty?
   end
 
   test "visit index with friendly forwarding" do
@@ -24,7 +46,7 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     assert_select "div.pagination", count: 2
 
     User.paginate(page: 1).each do |user|
-      assert_select "a[href=?]", user_path(user), text: user.name
+      assert_select "a[href=?]", user_path(user), text: user.name if user.activated?
     end
   end
 
