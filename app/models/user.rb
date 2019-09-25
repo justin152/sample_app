@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token, :activation_token
+  attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save :downcase_email
 
@@ -51,13 +51,32 @@ class User < ApplicationRecord
     UserMailer.account_activation(self).deliver_now
   end
 
+  def create_reset_digest
+    create_digest(:reset)
+    update_columns(reset_digest:  self.reset_digest,
+                   reset_sent_at: Time.zone.now)
+  end
+
+  def send_password_reset_email
+    UserMailer.password_reset(self).deliver_now
+  end
+
+  def password_reset_expired?
+    self.reset_sent_at < 2.hours.ago
+  end
+
   private
     def downcase_email
       email.downcase!
     end
 
     def create_activation_digest
-      self.activation_token = User.new_token
-      self.activation_digest = User.digest(activation_token)
+      create_digest(:activation)
+    end
+
+    def create_digest(attribute)
+      token = User.new_token
+      send("#{attribute}_token=", token)
+      send("#{attribute}_digest=", User.digest(token))
     end
 end
