@@ -76,7 +76,9 @@ class UsersController < ApplicationController
     end
 
     def active_user
-      flash[:danger] = "Cannot view a profile that has not been activated."
-      redirect_to(root_url) unless User.find(params[:id]).activated?
+       unless User.find(params[:id]).activated?
+         flash[:danger] = "Cannot view a profile that has not been activated."
+         redirect_to(root_url)
+       end
     end
 end
