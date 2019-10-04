@@ -9,10 +9,5 @@ if Rails.env.production?
       secret_access_key:  ENV['S3_SECRET_KEY'],     # required
       region:             ENV['S3_REGION']
     }
-
-    config.aws_attributes = {
-                              'Cache-Control'=>"max-age=#{365.day.to_i}",
-                              'Expires'=>'Tue, 29 Dec 2019 23:23:23 GMT'
-                            }
   end
 end
